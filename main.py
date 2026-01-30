@@ -1,4 +1,8 @@
 import os
+import threading
+from flask import Flask
+
+import os
 import telebot
 from telebot import types
 import sqlite3
@@ -694,7 +698,22 @@ def unsupported_message(message):
         reply_markup=main_kb()
     )
 
+import os
+import threading
+from flask import Flask
 
+app = Flask(__name__)
+
+@app.get("/")
+def home():
+    return "OK", 200
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
+# Flask серверді бөлек thread-та жүргіземіз
+threading.Thread(target=run_web, daemon=True).start()
 
 # --------- RUN ----------
 if __name__ == "__main__":
