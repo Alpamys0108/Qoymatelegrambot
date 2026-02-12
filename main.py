@@ -698,7 +698,9 @@ def unsupported_message(message):
         reply_markup=main_kb()
     )
 
-import os
+
+# ================= WEB (Flask) =================
+
 import threading
 from flask import Flask
 
@@ -706,17 +708,27 @@ app = Flask(__name__)
 
 @app.get("/")
 def home():
-    return "OK", 200
+    return "Bot is running", 200
+
 
 def run_web():
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
 
-# Flask серверді бөлек thread-та жүргіземіз
-threading.Thread(target=run_web, daemon=True).start()
 
-# --------- RUN ----------
+# ================= RUN =================
+
+def start_bot():
+    print("Bot is running...")
+    bot.infinity_polling(skip_pending=True)
+
+
 if __name__ == "__main__":
     init_db()
-    print("Bot is running...")
-    bot.infinity_polling()
+
+    # Telegram ботты бөлек потокта іске қосамыз
+    bot_thread = threading.Thread(target=start_bot)
+    bot_thread.start()
+
+    # Flask серверді негізгі потокта іске қосамыз
+    run_web()
